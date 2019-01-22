@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:m="http://maven.apache.org" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+	<info organisation="de.pzzz" module="throttling-utils" revision="0.0.1"/>
+	<publications>
+		<artifact name="throttling-utils" type="jar" ext="jar"/>
+		<artifact name="throttling-utils-sources" type="source" ext="jar"/>
+		<artifact name="throttling-utils-javadoc" type="javadoc" ext="jar"/>
+	</publications>
+	<dependencies>
+		<!-- Metrics -->
+		<!-- https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core -->
+		<dependency org="io.dropwizard" name="dropwizard-core" rev="1.3.7"/>
+
+		<!-- HTTP Client -->
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.6"/>
+
+		<!-- Tests -->
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+		<dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.3.1"/>
+		<!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-console -->
+		<dependency org="org.junit.platform" name="junit-platform-console" rev="1.3.1"/>
+		<!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner -->
+		<dependency org="org.junit.platform" name="junit-platform-runner" rev="1.3.1"/>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency org="org.mockito" name="mockito-core" rev="2.23.0"/>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+		<dependency org="org.mockito" name="mockito-junit-jupiter" rev="2.23.0"/>
+
+		<!-- Static Code analysis -->
+		<!-- https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs-ant -->
+		<dependency org="com.github.spotbugs" name="spotbugs-ant" rev="3.1.8"/>
+		<!-- https://mvnrepository.com/artifact/com.puppycrawl.tools/checkstyle -->
+		<dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.14"/>
+	</dependencies>
+</ivy-module>

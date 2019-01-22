@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="throttling-utils" default="jar" basedir="." 
+    xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="source" location="src" />
+    <property name="bin" location="bin" />
+    <property name="source-test" location="test" />
+    <property name="lib-source" location="lib" />
+    <property name="dist-dir" location="dist" />
+    <property name="reports-dir" location="reports" />
+
+    <path id="project.class.path">
+        <pathelement location="${bin}" />
+        <fileset dir="${lib-source}" includes="*.jar" />
+        <fileset dir="${lib-source}" includes="**/*.jar" />
+    </path>
+
+    <target name="jar" depends="compile, javadoc" description="Create the jar files">
+        <jar jarfile="${dist-dir}/throttling-utils.jar" basedir="${bin}"/>
+        <jar jarfile="${dist-dir}/throttling-utils-sources.jar" basedir="${source}"/>
+        <jar jarfile="${dist-dir}/throttling-utils-javadoc.jar" basedir="javadoc"/>
+    </target>
+
+    <target name="compile" depends="resolve" description="Compile java source to bytecode">
+        <mkdir dir="${bin}" />
+        <javac srcdir="${source}" includes="**" encoding="utf-8" destdir="${bin}" source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
+            <classpath refid="project.class.path" />
+        </javac>
+        <copy todir="${bin}">
+            <fileset dir="${source}" excludes="**/*.java" />
+        </copy>
+    </target>
+
+    <target name="resolve" description="retrieve dependencies with ivy">
+        <ivy:retrieve pattern="${lib-source}/[conf]/[artifact]-([classifier]-)[revision].[ext]" sync="true" />
+    </target>
+
+    <target name="clean" description="Cleans this project">
+        <delete dir="${bin}" failonerror="false" />
+        <delete dir="${reports-dir}" failonerror="false" />
+        <delete dir="javadoc" failonerror="false" />
+    </target>
+
+    <target name="test">
+        <!-- Clean and compile including tests -->
+        <delete dir="${bin}" failonerror="false" />
+        <mkdir dir="${bin}" />
+        <javac srcdir="${source}" includes="**" encoding="utf-8" destdir="${bin}" source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
+            <classpath refid="project.class.path" />
+        </javac>
+        <copy todir="${bin}">
+            <fileset dir="${source}" excludes="**/*.java" />
+        </copy>
+        <javac srcdir="${source-test}" includes="**" encoding="utf-8" destdir="${bin}" source="1.8" target="1.8" nowarn="true" debug="true" debuglevel="lines,vars,source">
+            <classpath refid="project.class.path" />
+        </javac>
+        <copy todir="${bin}">
+            <fileset dir="${source-test}" excludes="**/*.java" />
+        </copy>
+        <!-- Execute tests -->
+        <!--https://github.com/junit-team/junit5-samples/blob/master/junit5-jupiter-starter-ant/build.xml-->
+        <!--junitlauncher haltOnFailure="false">
+            <classpath>
+		<path refid="project.class.path" />
+                <pathelement location="${bin}"/>
+            </classpath>
+            <testclasses outputdir="${reports-dir}">
+		<fileset dir="${bin}">
+			<include name="**/*Test.class" />
+		</fileset>
+                <listener type="legacy-brief" sendSysOut="true"/>
+                <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+            </testclasses>
+        </junitlauncher-->
+        <mkdir dir="${reports-dir}/junit" />
+        <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="false">
+            <classpath>
+                <path refid="project.class.path" />
+            </classpath>
+            <arg value="--scan-classpath"/>
+            <arg line="--reports-dir ${reports-dir}/junit"/>
+        </java>
+        <!--Report tests -->
+        <mkdir dir="${reports-dir}/junit" />
+        <junitreport todir="${reports-dir}/junit">
+            <fileset dir="${reports-dir}/junit">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${reports-dir}/junit/html"/>
+        </junitreport>
+        <!-- Clean up -->
+        <delete dir="${bin}" failonerror="false" />
+    </target>
+
+    <target name='javadoc' description='Generate javadoc'>
+        <javadoc use='true' author='true' version='true' access='package' sourcepath='src' packagenames='*.*' destdir='javadoc' windowtitle='${project-name} // ${STAMP}' noqualifier='java.*:javax.*:com.sun.*'>
+            <classpath refid='project.class.path' />
+        </javadoc>
+    </target>
+
+    <target name="spotbugs" description="Runs spotbugs against the sources">
+        <fail message="Jar file not found - run target jar first!">
+            <condition>
+                <not>
+                    <available file="${dist-dir}/throttling-utils.jar" />
+                </not>
+            </condition>
+        </fail>
+        <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties" classpathref="project.class.path"/>
+        <mkdir dir="${reports-dir}" />
+        <spotbugs output="xml" outputFile="${reports-dir}/findbugs.xml" classpathref="project.class.path">
+            <class location="${dist-dir}/throttling-utils.jar" />
+            <sourcePath path="${source}" />
+            <auxClasspath path="${lib-source}/**/*.jar" />
+        </spotbugs>
+    </target>
+
+    <target name="checkstyle" description="Runs checkstyle against the sources">
+        <mkdir dir="${reports-dir}" />
+        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" classpathref="project.class.path"/>
+        <checkstyle config="checkstyle-config.xml" classpathref="project.class.path">
+            <fileset dir="${source}" includes="**/*.java"/>
+            <formatter type="xml" toFile="${reports-dir}/checkstyle-result.xml"/>
+        </checkstyle>
+    </target>
+</project>
