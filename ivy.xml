@@ -28,6 +28,8 @@
 		<dependency org="org.mockito" name="mockito-core" rev="2.23.0"/>
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
 		<dependency org="org.mockito" name="mockito-junit-jupiter" rev="2.23.0"/>
+		<!-- https://mvnrepository.com/artifact/org.jacoco/org.jacoco.ant -->
+		<dependency org="org.jacoco" name="org.jacoco.ant" rev="0.8.2"/>
 
 		<!-- Static Code analysis -->
 		<!-- https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs-ant -->

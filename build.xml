@@ -40,7 +40,8 @@
         <delete dir="javadoc" failonerror="false" />
     </target>
 
-    <target name="test">
+    <target name="test" xmlns:jacoco="antlib:org.jacoco.ant">
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"  classpathref="project.class.path"/>
         <!-- Clean and compile including tests -->
         <delete dir="${bin}" failonerror="false" />
         <mkdir dir="${bin}" />
@@ -71,14 +72,16 @@
                 <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
             </testclasses>
         </junitlauncher-->
-        <mkdir dir="${reports-dir}/junit" />
-        <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="false">
-            <classpath>
-                <path refid="project.class.path" />
-            </classpath>
-            <arg value="--scan-classpath"/>
-            <arg line="--reports-dir ${reports-dir}/junit"/>
-        </java>
+	<mkdir dir="${reports-dir}/junit" />
+	<jacoco:coverage destfile="${reports-dir}/tests.exec">
+            <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="false">
+                <classpath>
+                    <path refid="project.class.path" />
+                </classpath>
+                <arg value="--scan-classpath"/>
+                <arg line="--reports-dir ${reports-dir}/junit"/>
+            </java>
+        </jacoco:coverage>
         <!--Report tests -->
         <mkdir dir="${reports-dir}/junit" />
         <junitreport todir="${reports-dir}/junit">
@@ -87,8 +90,23 @@
             </fileset>
             <report format="frames" todir="${reports-dir}/junit/html"/>
         </junitreport>
+        <jacoco:report>
+            <executiondata>
+                <file file="${reports-dir}/tests.exec" />
+            </executiondata>
+            <structure name="throttling-utils tests">
+                <classfiles>
+                    <fileset dir="${bin}" />
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${source}" />
+                </sourcefiles>
+            </structure>
+            <html destdir="${reports-dir}/jacoco-html" />
+            <csv destfile="${reports-dir}/jacoco-report.csv" />
+            <xml destfile="${reports-dir}/jacoco-report.xml" />
+        </jacoco:report>
         <!-- Clean up -->
-        <delete dir="${bin}" failonerror="false" />
     </target>
 
     <target name='javadoc' description='Generate javadoc'>
@@ -110,7 +128,7 @@
         <spotbugs output="xml" outputFile="${reports-dir}/findbugs.xml" classpathref="project.class.path">
             <class location="${dist-dir}/throttling-utils.jar" />
             <sourcePath path="${source}" />
-            <auxClasspath path="${lib-source}/**/*.jar" />
+            <auxClasspath refid="project.class.path" />
         </spotbugs>
     </target>
 
