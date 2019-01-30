@@ -1,5 +1,5 @@
 # throttling-utils
-![Jenkins Build Status](http://cdn.pzzz.de/throttling-utils-status.svg)
+![Jenkins Build Status](http://cdn.pzzz.de/throttling-utils-status.svg) ![JaCoCo Coverage](http://cdn.pzzz.de/throttling-utils-jacoco.svg) ![Spotbugs Results](http://cdn.pzzz.de/throttling-utils-findbugs.svg) ![Checkstyle Results](http://cdn.pzzz.de/throttling-utils-checkstyle.svg)
 -----
 Framework and library to do both:
 - handle throttling at the client side

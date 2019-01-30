@@ -32,6 +32,7 @@
 
     <target name="resolve" description="retrieve dependencies with ivy">
         <ivy:retrieve pattern="${lib-source}/[conf]/[artifact]-([classifier]-)[revision].[ext]" sync="true" />
+        <ivy:report todir="${reports-dir}" graph="false" />
     </target>
 
     <target name="clean" description="Cleans this project">
@@ -40,8 +41,9 @@
         <delete dir="javadoc" failonerror="false" />
     </target>
 
-    <target name="test" xmlns:jacoco="antlib:org.jacoco.ant">
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"  classpathref="project.class.path"/>
+    <target name="test"
+        xmlns:jacoco="antlib:org.jacoco.ant">
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="project.class.path"/>
         <!-- Clean and compile including tests -->
         <delete dir="${bin}" failonerror="false" />
         <mkdir dir="${bin}" />
@@ -72,8 +74,8 @@
                 <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
             </testclasses>
         </junitlauncher-->
-	<mkdir dir="${reports-dir}/junit" />
-	<jacoco:coverage destfile="${reports-dir}/tests.exec">
+        <mkdir dir="${reports-dir}/junit" />
+        <jacoco:coverage destfile="${reports-dir}/tests.exec">
             <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="false">
                 <classpath>
                     <path refid="project.class.path" />
